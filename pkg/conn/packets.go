@@ -12,7 +12,6 @@ type Send struct {
 }
 
 type Message struct {
-	Destination string // 27 byte
 	Id          int    // 5 bytes
 	ConnId      string // 20 char
 	Content     string // 8 kilo
@@ -46,8 +45,8 @@ func ConvertToMessage(b *[]byte) (*Message, error) {
 	return &Message{
 		Id: i,
 		//Destination: util.RemoveAdditionalCharacters((*b)[6:34]),
-		ConnId:  string((*b)[6:27]),
-		Content: string((*b)[27:]),
+		ConnId:  string((*b)[6:26]),
+		Content: string((*b)[26:]),
 	}, nil
 }
 

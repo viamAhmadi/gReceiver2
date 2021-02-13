@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/viamAhmadi/gReceiver2/pkg/conn"
 	"github.com/zeromq/goczmq"
 )
@@ -28,7 +27,6 @@ func (a *application) router(rc *[][]byte) {
 	valStr := string((*rc)[1][0])
 	from := (*rc)[0]
 	if valStr == "c" {
-		fmt.Println(string((*rc)[1]))
 		c, err := conn.ConvertToReceiveConn(from, (*rc)[1])
 		if err != nil {
 			a.errorLog.Println(err)

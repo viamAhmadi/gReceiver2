@@ -19,11 +19,11 @@ func (a *application) connectionHandler(c *conn.ReceiveConn) {
 	}()
 	for {
 		select {
-		case m := <-c.MsgChan:
-			fmt.Println("new message ", *m)
+		case _ = <-c.MsgChan:
+			//fmt.Println("new message ", *m)
 			if c.Counter == c.Count {
 				c.Successful = conn.YES
-				if err := c.SendPacketFactor(c.From, &conn.Factor{ConnId: c.Id, Successful: conn.YES, List: nil}); err != nil {
+				if err := c.SendPacketFactor(c.From, &conn.Factor{ConnId: c.Id, Successful: c.Successful, List: nil}); err != nil {
 					a.errorLog.Println("error in send factor to ", c.Id)
 				}
 				c.Close()
@@ -33,9 +33,19 @@ func (a *application) connectionHandler(c *conn.ReceiveConn) {
 			fmt.Println("close connection")
 			return
 		case <-time.After(3 * time.Second):
-			// send factor
-			// when sender get a factor so destroy her dealer
-			a.infoLog.Println("connection closed, timeout 3 sec, id: ", c.Id)
+			if c.IsOpen == 0 {
+				return
+			}
+			missedCount := c.CalculateMissingMessages()
+			if missedCount == 0 {
+				c.Successful = conn.YES
+			} else {
+				c.Successful = conn.NO
+			}
+			if err := c.SendPacketFactor(c.From, &conn.Factor{ConnId: c.Id, Successful: c.Successful, List: c.MissingMessages}); err != nil {
+				a.errorLog.Println("error in send factor to ", c.Id)
+			}
+			a.infoLog.Printf("connId: %s received: %d - connection closed, timeout 3 sec\n", c.Id, c.Messages.Count())
 			c.Close()
 			return
 		case e := <-c.ErrorCh:
@@ -56,7 +66,7 @@ func (a *application) messageHandler(msg *conn.Message) {
 		return
 	}
 	if rConn.IsOpen == 0 {
-		fmt.Println("connection is closed but you want to write")
+		fmt.Println("connection is closed")
 		return
 	}
 	rConn.MsgChan <- msg

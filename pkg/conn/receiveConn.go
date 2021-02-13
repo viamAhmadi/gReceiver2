@@ -49,7 +49,18 @@ func NewReceiveConn(des, id string, count int, from []byte) *ReceiveConn {
 
 func (c *ReceiveConn) AddMsg(msg *Message) error {
 	c.Counter += 1
-	return nil
+	return c.Messages.Add(msg)
+}
+
+func (c *ReceiveConn) CalculateMissingMessages() int {
+	var missed int
+	for i := 1; i <= c.Count; i++ {
+		if m := c.Messages.Get(i); m == nil {
+			*c.MissingMessages = append(*c.MissingMessages, string(i))
+			missed += 1
+		}
+	}
+	return missed
 }
 
 func (c *ReceiveConn) SendPacketFactor(to []byte, f *Factor) error {
