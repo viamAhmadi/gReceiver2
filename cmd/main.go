@@ -28,7 +28,7 @@ func main() {
 
 	app.infoLog.Println("starting receiver...")
 
-	if err := app.startReceiving("tcp://127.0.0.1:5555"); err != nil {
+	if err := app.startReceiving("tcp://127.0.0.3:5555"); err != nil {
 		panic(err)
 	}
 }

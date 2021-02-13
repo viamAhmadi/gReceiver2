@@ -6,6 +6,10 @@ import (
 	"strconv"
 )
 
+type Send struct {
+	ConnId string
+}
+
 type Message struct {
 	Destination string // 27 byte
 	Id          int    // 5 bytes
@@ -17,6 +21,17 @@ type Factor struct {
 	ConnId     string
 	Successful byte
 	List       []string
+}
+
+func ConvertToSend(b []byte) (Send, error) {
+	if len(b) < 20 {
+		return Send{}, ErrConvertToModel
+	}
+	return Send{ConnId: string(b[1:21])}, nil
+}
+
+func SerializeSend(connId string) []byte {
+	return []byte(fmt.Sprintf("s%s", connId))
 }
 
 func ConvertToMessage(b *[]byte) (*Message, error) {
