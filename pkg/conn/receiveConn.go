@@ -1,6 +1,9 @@
 package conn
 
-import "errors"
+import (
+	"errors"
+	"github.com/zeromq/goczmq"
+)
 
 const YES = 1
 const NO = 0
@@ -11,7 +14,7 @@ var ErrDealer = errors.New("dealer was nil")
 
 type ReceiveConn struct {
 	From            []byte
-	Receiver        Receiver
+	Receiver        *Receiver
 	Destination     string
 	Count           int
 	Counter         int
@@ -32,8 +35,10 @@ func NewReceiveConn(des, id string, count int, from []byte) *ReceiveConn {
 		From:            from,
 		Destination:     des,
 		Count:           count,
+		IsOpen:          NO,
 		Id:              id,
 		MsgChan:         make(chan *Message),
+		ErrorCh:         make(chan Error),
 		CloseCh:         make(chan struct{}),
 		Messages:        &Messages{},
 		MissingMessages: &[]string{},
@@ -47,6 +52,25 @@ func (c *ReceiveConn) AddMsg(msg *Message) error {
 	return nil
 }
 
-func (c *ReceiveConn) SendPacketFactor(f *Factor) error {
-	return nil
+func (c *ReceiveConn) SendPacketFactor(to []byte, f *Factor) error {
+	err := c.Receiver.sock.SendFrame(to, goczmq.FlagMore)
+	if err != nil {
+		return err
+	}
+	return c.Receiver.sock.SendFrame(*SerializeFactor(f), goczmq.FlagNone)
+}
+
+func (c *ReceiveConn) SendPacketSend(to []byte, f Send) error {
+	err := c.Receiver.sock.SendFrame(to, goczmq.FlagMore)
+	if err != nil {
+		return err
+	}
+	return c.Receiver.sock.SendFrame(SerializeSend(f.ConnId), goczmq.FlagNone)
+}
+
+func (c *ReceiveConn) Close() {
+	c.IsOpen = NO
+	close(c.MsgChan)
+	close(c.ErrorCh)
+	close(c.CloseCh)
 }
