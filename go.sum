@@ -1,0 +1,4 @@
+github.com/viamAhmadi/graphBroker v0.0.0-20210212163144-4f135557665a h1:WR+0S9MoRNm5anZyeLgBmPd4iNRQAT+g/Ii/dDelaFY=
+github.com/viamAhmadi/graphBroker v0.0.0-20210212163144-4f135557665a/go.mod h1:zuh+01rnu3QeVbqdcpIgoUlaLtp4SRd4uavA3kSxmcI=
+github.com/zeromq/goczmq v4.1.0+incompatible h1:cGVQaU6kIwwrGso0Pgbl84tzAz/h7FJ3wYQjSonjFFc=
+github.com/zeromq/goczmq v4.1.0+incompatible/go.mod h1:1uZybAJoSRCvZMH2rZxEwWBSmC4T7CB/xQOfChwPEzg=
