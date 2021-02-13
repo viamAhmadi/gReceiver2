@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/viamAhmadi/gReceiver/pkg/conn"
+	"github.com/viamAhmadi/gReceiver2/pkg/conn"
 	"github.com/zeromq/goczmq"
 )
 
@@ -27,12 +27,17 @@ func (a *application) router(rc *[][]byte) {
 	valStr := string((*rc)[1][0])
 	from := (*rc)[0]
 	if valStr == "c" {
-		// TODO convert above params to rc conn struct
-		go a.connectionHandler(from, &(*rc)[1])
-		//a.infoLog.Println("new connection")
+		c, err := conn.ConvertToReceiveConn(from, (*rc)[1])
+		if err != nil {
+			a.errorLog.Println(err)
+		}
+		go a.connectionHandler(c)
 	} else if valStr == "m" {
-		// TODO convert above params to msg struct
-		go a.messageHandler(from, &(*rc)[1])
+		msg, err := conn.ConvertToMessage(&(*rc)[1])
+		if err != nil {
+			a.errorLog.Println(err)
+		}
+		go a.messageHandler(msg)
 	} else {
 		a.infoLog.Printf("there is unknown type, value: %v\n", valStr)
 	}

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/viamAhmadi/gReceiver/pkg/conn"
+	"github.com/viamAhmadi/gReceiver2/pkg/conn"
 	"time"
 )
 

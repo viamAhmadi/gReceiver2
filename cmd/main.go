@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/viamAhmadi/gReceiver/pkg/conn"
-	"github.com/viamAhmadi/gReceiver/pkg/models/storage"
+	"github.com/viamAhmadi/gReceiver2/pkg/conn"
+	"github.com/viamAhmadi/gReceiver2/pkg/models/storage"
 	"log"
 	"os"
 )

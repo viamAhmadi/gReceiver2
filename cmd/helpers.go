@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/viamAhmadi/gReceiver/pkg/conn"
+	"github.com/viamAhmadi/gReceiver2/pkg/conn"
 	"runtime/debug"
 )
 

@@ -1,4 +1,4 @@
-module github.com/viamAhmadi/gSender
+module github.com/viamAhmadi/gReceiver2
 
 go 1.15
 
