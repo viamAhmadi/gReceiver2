@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/viamAhmadi/gReceiver2/pkg/conn"
+	"github.com/viamAhmadi/gReceiver2/pkg/util"
 	"time"
 )
 
 func (a *application) connectionHandler(c *conn.ReceiveConn) {
+	a.infoLog.Println("new connection")
 	c.IsOpen = 1
 	if err := a.ReceivedConns.Add(c); err != nil {
 		a.errorLog.Println("connection already exist")
@@ -26,13 +28,14 @@ func (a *application) connectionHandler(c *conn.ReceiveConn) {
 				if err := c.SendPacketFactor(c.From, &conn.Factor{ConnId: c.Id, Successful: c.Successful, List: nil}); err != nil {
 					a.errorLog.Println("error in send factor to ", c.Id)
 				}
+				a.infoLog.Printf("connId: %s received: %d\n", c.Id, c.Messages.Count())
 				c.Close()
 				return
 			}
 		case <-c.CloseCh:
 			fmt.Println("close connection")
 			return
-		case <-time.After(3 * time.Second):
+		case <-time.After(util.CalculateTimeout(3, c.Count)):
 			if c.IsOpen == 0 {
 				return
 			}
@@ -45,7 +48,7 @@ func (a *application) connectionHandler(c *conn.ReceiveConn) {
 			if err := c.SendPacketFactor(c.From, &conn.Factor{ConnId: c.Id, Successful: c.Successful, List: c.MissingMessages}); err != nil {
 				a.errorLog.Println("error in send factor to ", c.Id)
 			}
-			a.infoLog.Printf("connId: %s received: %d - connection closed, timeout 3 sec\n", c.Id, c.Messages.Count())
+			a.infoLog.Printf("connId: %s received: %d - connection closed, timeout\n", c.Id, c.Messages.Count())
 			c.Close()
 			return
 		case e := <-c.ErrorCh:

@@ -3,6 +3,7 @@ package util
 import (
 	"strconv"
 	"strings"
+	"time"
 )
 
 // RemoveAdditionalCharacters
@@ -34,4 +35,9 @@ func ConvertIntToBytes(id int) []byte {
 	return b
 }
 
-
+func CalculateTimeout(baseTimeout int, numberOfPackets int) time.Duration {
+	if numberOfPackets < 10000 {
+		return time.Duration(baseTimeout) * time.Second
+	}
+	return time.Duration(baseTimeout+((numberOfPackets/10000)/2)) * time.Second
+}

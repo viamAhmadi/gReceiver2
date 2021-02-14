@@ -26,6 +26,7 @@ type ReceiveConn struct {
 	MsgChan         chan *Message
 	CloseCh         chan struct{}
 	ErrorCh         chan Error
+	MissedCount     int
 }
 
 // id = from rec conns get id from the connection
@@ -44,6 +45,7 @@ func NewReceiveConn(des, id string, count int, from []byte) *ReceiveConn {
 		MissingMessages: &[]string{},
 		Successful:      NO,
 		Counter:         0,
+		MissedCount:     0,
 	}
 }
 
@@ -60,6 +62,7 @@ func (c *ReceiveConn) CalculateMissingMessages() int {
 			missed += 1
 		}
 	}
+	c.MissedCount = missed
 	return missed
 }
 
