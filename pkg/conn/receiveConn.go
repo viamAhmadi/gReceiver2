@@ -19,7 +19,7 @@ type ReceiveConn struct {
 	Count           int
 	Counter         int
 	Id              string // 20 char
-	IsOpen          int    // open 1, closed 0
+	IsOpen          int    // open 1, closed 0, undefined 2
 	Successful      int    //  1 - 0
 	Messages        *Messages
 	MissingMessages *[]string
@@ -36,7 +36,7 @@ func NewReceiveConn(des, id string, count int, from []byte) *ReceiveConn {
 		From:            from,
 		Destination:     des,
 		Count:           count,
-		IsOpen:          NO,
+		IsOpen:          2,
 		Id:              id,
 		MsgChan:         make(chan *Message),
 		ErrorCh:         make(chan Error),

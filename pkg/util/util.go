@@ -1,10 +1,15 @@
 package util
 
 import (
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 // RemoveAdditionalCharacters
 func RemoveAdditionalCharacters(b []byte) string {
@@ -40,4 +45,13 @@ func CalculateTimeout(baseTimeout int, numberOfPackets int) time.Duration {
 		return time.Duration(baseTimeout) * time.Second
 	}
 	return time.Duration(baseTimeout+((numberOfPackets/10000)/2)) * time.Second
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+func RandomString(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }

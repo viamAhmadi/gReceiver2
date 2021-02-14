@@ -24,3 +24,9 @@ func (r *ReceivedConns) Get(connId string) *ReceiveConn {
 	mutex.Unlock()
 	return conn
 }
+
+func (r *ReceivedConns) Remove(connId string) {
+	mutex.Lock()
+	delete(*r, connId)
+	mutex.Unlock()
+}
